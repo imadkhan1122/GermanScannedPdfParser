@@ -1,0 +1,15 @@
+pytesseract
+tesseract==0.1.3
+albumentations==0.4.6
+efficientnet-pytorch
+ghostscript
+camelot-py
+ghostscript
+fitz==0.0.1.dev2
+opencv_contrib_python==4.4.0.46
+Pillow==9.0.0
+PyMuPDF==1.20.1
+torchvision
+opencv-python
+python_dateutil==2.8.2
+tqdm==4.62.3
