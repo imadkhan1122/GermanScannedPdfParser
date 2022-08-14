@@ -24,7 +24,6 @@
 ### PACKAGES INSTALLATION:
     1. cd to "PDF_PARSER" directory and open cmd or terminal and type .
     "pip install -r requirements.txt" by doing this required packages will be installed.
-    2. cut ''deu.traineddata' file from project folder and put C:\\Program Files\\Tesseract-OCR\\tessdata
     
 ### RUN THE SCRIPT:
     1. Open main.py in any text editor and change 'path' to your folder path where you placed pdf files or open main.ipynb file in jupyter notebook and change path and run.
