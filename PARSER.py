@@ -7,12 +7,11 @@ import os
 # used for image processing and loading
 from PIL import Image
 import re
-from dateutil import parser
 import csv
 from tqdm import tqdm
 
 
-#pytesseract.pytesseract.tesseract_cmd =r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd =r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
 
 class PDF_PARSER():
@@ -51,6 +50,11 @@ class PDF_PARSER():
                 st ='Lage:' + s[2]
                 for e in st.rsplit('\n')[:-2]:
                     Text.append(e)
+            elif 'nage:' in text:     
+                s = text.partition('nage:')
+                st ='Lage:' + s[2]
+                for e in st.rsplit('\n')[:-2]:
+                    Text.append(e)
             else:
                 s = text.partition('Bodenschätzung')[2]
                 for e in s.rsplit('\n')[:-2]:
@@ -60,8 +64,8 @@ class PDF_PARSER():
     def check_date(self, s):
         date_ = ''    
         try:
-            res = parser.parse(s, fuzzy=True)
-            return res
+            res = re.search("(\d{2}[.]+\d{2}[.]+\d{4})", s)
+            return res[0]
         except:
             return date_
     
@@ -142,28 +146,22 @@ class PDF_PARSER():
                                    if len(V) == 1:
                                        if ', ' in V[0]:
                                            FN, SN = re.split(', ', V[0], 1)
+                                       elif 'geb.' in V[0] or ', ' in V[0]:
+                                           comp = ''
                                        else:
-                                           regex = re.compile('[@_!#$%^&*()<>?/\|}{~:.]') 
+                                           comp = V[0]
                                            
-                                           # Pass the string in search  
-                                           # method of regex object.     
-                                           if(regex.search(V[0]) == None):
-                                               comp = V[0]
-                                           else:
-                                               comp = ''
+                                           
                                    elif len(V) > 1:
                                        for el in V:
                                            if ', ' in el:
                                                FN, SN = re.split(', ', el, 1)
+                                           elif 'geb.' in V[0] or ', ' in V[0]:
+                                               comp = ''
+                                           elif 'GmbH' in V[0] or 'mbH' in V[0]:
+                                               comp = V[0]
                                            else:
-                                               regex = re.compile('[@_!#$%^&*()<>?/\|}{~:.]') 
-                                               
-                                               # Pass the string in search  
-                                               # method of regex object.     
-                                               if(regex.search(el) == None):
-                                                   comp = el
-                                               else:
-                                                   comp = ''
+                                               comp = V[0]
                                    d = [keys, comp, FN, SN, address, post_code, city]
                                    dic.append(d)
                                else:
@@ -176,7 +174,7 @@ class PDF_PARSER():
         hdr = ['House', 'Firma', 'Eigentümer Vorname', 'Eigentümer Nachname', 'Adresse', 'Postleitzahl', 'Stadt']
         path = self.pth
         dir_ = self.load_files(path)
-        with open('Result.csv', 'w', newline = '') as output_csv:
+        with open('Result.csv', 'w', newline = '', encoding='utf-8') as output_csv:
             # initialize rows writer
             csv_writer = csv.writer(output_csv)
             # write headers to the file
